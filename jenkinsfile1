@@ -5,7 +5,7 @@ pipeline {
         BUILD_VERSION = "4.0.${BUILD_NUMBER}"
         ARTIFACT_NAME = "app-${BUILD_VERSION}.zip"
         ARTIFACT_PATH = "sandeep-build/${ARTIFACT_NAME}"
-        ARTIFACTORY_URL = "http://20.109.57.182:8082/artifactory/raman-dev-local/releases/${ARTIFACT_NAME}"
+        ARTIFACTORY_URL = "http://20.109.57.182:8082/artifactory/raman-dev-wrong/releases/${ARTIFACT_NAME}"
     }
 
     stages {
