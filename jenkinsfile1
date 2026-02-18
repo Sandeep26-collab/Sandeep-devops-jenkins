@@ -27,8 +27,8 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo "Simulating tests..."
-                sh 'echo "Tests passed successfully."'
+                echo "Exiting tests..."
+                sh 'exit 1'
             }
         }
 
