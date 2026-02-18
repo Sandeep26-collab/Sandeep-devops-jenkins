@@ -40,6 +40,18 @@ pipeline {
                 archiveArtifacts artifacts: 'sandeep-build/*.zip', fingerprint: true
             }
         }
+        stage('Publish to Artifactory') {
+            steps {
+                withCredentials([string(credentialsId: 'test-artifactory-api-key', variable: 'API_KEY')]) {
+                    sh '''
+                        curl -H "X-JFrog-Art-Api: ${API_KEY}" \
+                        -T ${ARTIFACT_PATH} \
+                        ${ARTIFACTORY_URL}
+                    '''
+                }
+            }
+        }
+
     }
 
     post {
