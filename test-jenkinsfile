@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+
+    parameters {
+        booleanParam(
+            name: 'RUN_BUILD',
+            defaultValue: true,
+            description: 'Execute Maven build step?'
+        )
+
+        string(
+            name: 'CUSTOM_VERSION',
+            defaultValue: '',
+            description: 'Optional custom version (leave empty to use default)'
+        )
+
+        choice(
+            name: 'DEPLOY_ENV',
+            choices: ['dev', 'qa', 'prod'],
+            description: 'Select deployment environment'
+        )
+    }
+
+    environment {
+        BUILD_VERSION = "${params.CUSTOM_VERSION ?: "1.0.${env.BUILD_NUMBER}"}"
+    }
+
+    stages {
+
+        stage('Initialize') {
+            steps {
+                cleanWs()
+                echo "Starting CI Build..."
+                echo "Selected Environment: ${params.DEPLOY_ENV}"
+                echo "Build Version: ${BUILD_VERSION}"
+            }
+        }
+
+        stage('Build') {
+            when {
+                expression { return params.RUN_BUILD }
+            }
+            steps {
+                echo "Running Maven Build..."
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Archive Artifact') {
+            when {
+                expression { return params.RUN_BUILD }
+            }
+            steps {
+                sh """
+                    mkdir -p ramanbuild2
+                    mv target/devops.war ramanbuild2/devops-${BUILD_VERSION}.war
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline executed successfully."
+        }
+        failure {
+            echo "Pipeline failed."
+        }
+    }
+}
