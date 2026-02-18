@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     parameters {
         booleanParam(
             name: 'RUN_BUILD',
@@ -11,7 +15,7 @@ pipeline {
         string(
             name: 'CUSTOM_VERSION',
             defaultValue: '',
-            description: 'Optional custom version (leave empty to use default)'
+            description: 'Optional custom version (leave empty for auto version)'
         )
 
         choice(
@@ -27,9 +31,15 @@ pipeline {
 
     stages {
 
-        stage('Initialize') {
+        stage('Prepare Workspace') {
             steps {
                 cleanWs()
+                checkout scm
+            }
+        }
+
+        stage('Initialize') {
+            steps {
                 echo "Starting CI Build..."
                 echo "Selected Environment: ${params.DEPLOY_ENV}"
                 echo "Build Version: ${BUILD_VERSION}"
@@ -41,7 +51,6 @@ pipeline {
                 expression { return params.RUN_BUILD }
             }
             steps {
-                echo "Running Maven Build..."
                 sh 'mvn clean package'
             }
         }
