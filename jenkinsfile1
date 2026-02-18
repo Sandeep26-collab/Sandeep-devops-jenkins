@@ -18,7 +18,7 @@ pipeline {
             steps {
                 echo "Building artifact version ${BUILD_VERSION}"
                 sh '''
-                    mkdir -p build
+                    mkdir -p sandeep-build
                     echo "Artifact built by Jenkins build #${BUILD_NUMBER}" > sandeep-build/app.txt
                     zip -r sandeep-build/app-${BUILD_VERSION}.zip sandeep-build/app.txt
                 '''
